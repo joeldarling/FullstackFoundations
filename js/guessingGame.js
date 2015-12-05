@@ -1,8 +1,10 @@
 /* **** Global Variables **** */
 // try to elminate these global variables in your project, these are here just to start.
 
-var playersGuess,
-    winningNumber = generateWinningNumber();
+var playersGuess=0,
+    winningNumber = generateWinningNumber(),
+    guessesLeft = 5,
+    guessHistory=[];
 
 
 
@@ -24,10 +26,27 @@ function playersGuessSubmission(){
 
   playersGuess=parseInt(guess.val());
 
-  //reset text
-  guess.val('Enter a number 1-100');
+  //check to see if there's a dupe guess
+  if(!checkGuessHistory(guessHistory,guess))
+  {
+    //new guess!
+    guessHistory.push(playersGuess);
 
-  console.log("players guess: "+playersGuess);
+    //decrement guess counter
+    guessesLeft--;
+
+    //update page with guess List
+    $('#guess-list').append("<p>"+guess.val()+"</p>");
+
+    //print guess to log
+    console.log("players guess: "+playersGuess);
+
+  }
+
+
+  //reset text
+  //guess.val('Enter a number 1-100');
+
 }
 
 // Determine if the next guess should be a lower or higher number
@@ -40,6 +59,16 @@ function lowerOrHigher(){
 
 function checkGuess(){
 	// add code here
+  if(playersGuess == winningNumber)
+  {
+    //we have a winner!
+  }
+  else
+  {
+    //bad guess
+
+  }
+
 }
 
 // Create a provide hint button that provides additional clues to the "Player"
@@ -52,6 +81,18 @@ function provideHint(){
 
 function playAgain(){
 	// add code here
+}
+
+function checkGuessHistory(arr, number)
+{
+  for(var i=0;i<arr.length;i++)
+  {
+    if(arr[i] == number)
+      return true;
+  }
+
+  //no match
+  return false;
 }
 
 
