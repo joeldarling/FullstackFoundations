@@ -22,26 +22,10 @@ function generateWinningNumber(){
 
 function playersGuessSubmission(){
 	// add code here
-  var guess = $('#guessInput');
-
-  playersGuess=parseInt(guess.val());
-
-  //check to see if there's a dupe guess
-  if(!checkGuessHistory(guessHistory,guess))
-  {
-    //new guess!
-    guessHistory.push(playersGuess);
-
-    //decrement guess counter
-    guessesLeft--;
-
-    //update page with guess List
-    $('#guess-list').append("<p>"+guess.val()+"</p>");
-
-    //print guess to log
-    console.log("players guess: "+playersGuess);
-
-  }
+  playersGuess=parseInt($('#guessInput').val());
+  console.log(winningNumber);
+  //check the answer!
+  checkGuess();
 
 
   //reset text
@@ -53,6 +37,29 @@ function playersGuessSubmission(){
 
 function lowerOrHigher(){
 	// add code here
+  var guessProximity = Math.abs(playersGuess-winningNumber);
+  var result = "";
+
+  if(playersGuess < winningNumber)
+  {
+    result+="Your guess is lower ";
+  }
+  else {
+    result+="Your guess is higher ";
+  }
+
+  if(guessProximity<=10){
+    result+=" and you are within 10 digits!";
+  }
+  else if(guessProximity>10 && guessProximity<20)
+  {
+    result+=" and you are within 20 digits!";
+  }
+  else{
+    result+=" and you are more than 20 digits away!";
+  }
+
+  return result;
 }
 
 // Check if the Player's Guess is the winning number
@@ -62,10 +69,33 @@ function checkGuess(){
   if(playersGuess == winningNumber)
   {
     //we have a winner!
+    $('#status').text("You win!");
+
   }
   else
   {
-    //bad guess
+    //bad guess!
+
+    //check to see if there's a dupe guess
+    if(!checkGuessHistory(guessHistory,$('#guessInput').val()))
+    {
+      //new guess!
+      guessHistory.push(playersGuess);
+
+      //decrement guess counter
+      guessesLeft--;
+
+      //update page with guess List
+      $('#guess-list').append("<p>"+$('#guessInput').val()+"</p>");
+
+      //print guess to log
+      console.log("players guess: "+playersGuess);
+
+      $('#guess-count').text(guessesLeft + " Guesses Remaining");
+
+      $('#status').text(lowerOrHigher());
+
+    }
 
   }
 
