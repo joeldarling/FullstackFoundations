@@ -14,8 +14,9 @@
       <script src="../../assets/js/html5shiv.js"></script>
       <script src="../../assets/js/respond.min.js"></script>
     <![endif]-->
-    <script src='js/guessingGame.js'></script>
     <script src='js/jquery-2.1.4.min.js'></script>
+    <script src='js/jquery-ui.min.js'></script>
+    <script src='js/guessingGame.js'></script>
 
   </head>
   <body>
@@ -45,15 +46,15 @@
 
             <!-- Hint Button -->
             <div class="col-sm-6">
-              <button  class="small-button">
+              <button  class="small-button" onclick="provideHint()">
               <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
               Hint</button>
             </div>
             <!-- Game Reset Button -->
 
             <div class="col-sm-6">
-              <button class="small-button">
-              <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
+              <button class="small-button" onclick="playAgain()">
+              <span class="glyphicon glyphicon-repeat" aria-hidden="true""></span>
                 Start Over</button>
             </div>
 

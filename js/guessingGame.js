@@ -1,10 +1,10 @@
 /* **** Global Variables **** */
 // try to elminate these global variables in your project, these are here just to start.
 
-var playersGuess=0,
-    winningNumber = generateWinningNumber(),
+
+var winningNumber = generateWinningNumber(),
     guessesLeft = 5,
-    guessHistory=[];
+    guessHistory=[],gameOver=false;
 
 
 
@@ -21,26 +21,25 @@ function generateWinningNumber(){
 // Fetch the Players Guess
 
 function playersGuessSubmission(){
-	// add code here
-  playersGuess=parseInt($('#guessInput').val());
-  console.log(winningNumber);
+
+  //Triggered when user presses SUBMIT or clicks enter
+
+  //grab the current value from the input field
+  var playersGuess=parseInt($('#guessInput').val());
+
   //check the answer!
-  checkGuess();
-
-
-  //reset text
-  //guess.val('Enter a number 1-100');
+  if(!isNaN(playersGuess) && gameOver == false)
+    checkGuess(playersGuess);
 
 }
 
 // Determine if the next guess should be a lower or higher number
-
-function lowerOrHigher(){
+function lowerOrHigher(guess){
 	// add code here
-  var guessProximity = Math.abs(playersGuess-winningNumber);
+  var guessProximity = Math.abs(guess-winningNumber);
   var result = "";
 
-  if(playersGuess < winningNumber)
+  if(guess < winningNumber)
   {
     result+="Your guess is lower ";
   }
@@ -50,13 +49,16 @@ function lowerOrHigher(){
 
   if(guessProximity<=10){
     result+=" and you are within 10 digits!";
+    changeBackground("#c84340");
   }
   else if(guessProximity>10 && guessProximity<20)
   {
     result+=" and you are within 20 digits!";
+    changeBackground("#ee702c");
   }
   else{
     result+=" and you are more than 20 digits away!";
+    changeBackground("#00ccff");
   }
 
   return result;
@@ -64,38 +66,74 @@ function lowerOrHigher(){
 
 // Check if the Player's Guess is the winning number
 
-function checkGuess(){
+function checkGuess(guess){
 	// add code here
-  if(playersGuess == winningNumber)
+  if(guess == winningNumber)
   {
     //we have a winner!
-    $('#status').text("You win!");
+    changeBackground("#f5f5f5");
 
+    $('#guess-count').text("");
+    //print Winner Message!
+    $('#status').text("You are a WINNER!");
+    $('.container').effect("bounce",1000);
+  }
+  else if(guess<1 || guess>100)
+  {
+    //out of range
+    $('#status').text("You need to guess a number between 1 and 100!");
+    $('#status').effect("bounce",500);
+
+  }
+  else if(checkGuessHistory(guessHistory,guess))
+  {
+    //player already guessed this!
+    $('#status').text("You already guessed this number.");
+    $('#status').effect("bounce",500);
+    console.log(guessHistory);
+    console.log(guess);
   }
   else
   {
     //bad guess!
+    //decrement guess counter
+    guessesLeft--;
 
-    //check to see if there's a dupe guess
-    if(!checkGuessHistory(guessHistory,$('#guessInput').val()))
+    //check for end of game
+    if(guessesLeft==0)
     {
-      //new guess!
-      guessHistory.push(playersGuess);
-
-      //decrement guess counter
-      guessesLeft--;
-
-      //update page with guess List
-      $('#guess-list').append("<p>"+$('#guessInput').val()+"</p>");
-
-      //print guess to log
-      console.log("players guess: "+playersGuess);
-
+      //game over
+      gameOver = true;
+      //print guesses remaining
       $('#guess-count').text(guessesLeft + " Guesses Remaining");
 
-      $('#status').text(lowerOrHigher());
+      $('#status').text("You lose. Try again!");
+
+      //change DOM to scaryness
+      changeBackground("#1f1f1f");
+      $("body").css("color", "red");
 
     }
+    else
+    {
+      //new guess! add it to the list
+      guessHistory.push(guess);
+
+      //is this the first guess? if so, show the guess list
+      if(guessHistory.length>0)
+        $("#guess-list").css("display", "block");
+
+      //update page with guess to guess List
+      $('#guess-list').append("<p>"+guess+"</p>");
+
+      //print guesses remaining
+      $('#guess-count').text(guessesLeft + " Guesses Remaining");
+
+      //update DOM with guess advice!
+      $('#status').text(lowerOrHigher(guess));
+
+    }
+
 
   }
 
@@ -105,16 +143,57 @@ function checkGuess(){
 
 function provideHint(){
 	// add code here
+
+  var options=[];
+
+  options.push(Math.floor(Math.random()*99) + 1);
+  options.push(Math.floor(Math.random()*99) + 1);
+  options.push(winningNumber);
+
+  //add 3 possible hits to the DOM
+  $("#guess-list").css("display", "block");
+  $('#guess-list').append("<p> ** Hint: "+options[0]+" or "+options[1]+" or "+options[2]+" **</p>");
+
 }
 
 // Allow the "Player" to Play Again
 
 function playAgain(){
-	// add code here
+
+//Reset the game state!
+gameOver = false;
+
+//generate new winning Number
+winningNumber = generateWinningNumber();
+
+//reset Guesses remaining
+guessesLeft = 5;
+
+
+//print guesses remaining
+$('#guess-count').text(guessesLeft + " Guesses Remaining");
+
+//reset the Guess Display
+$('#guess-list').find('p').empty();
+$("#guess-list").css("display", "none");
+
+//reset guesses array
+guessHistory = [];
+
+//reset colors
+changeBackground("#00ccff");
+$("body").css("color", "#332");
+
+//
+$('#guessInput').val("Enter a number 1-100");
+//reset game feedback text
+$('#status').text('');
+
 }
 
 function checkGuessHistory(arr, number)
 {
+  //a little helper function to search previously used answers
   for(var i=0;i<arr.length;i++)
   {
     if(arr[i] == number)
@@ -127,3 +206,29 @@ function checkGuessHistory(arr, number)
 
 
 /* **** Event Listeners/Handlers ****  */
+
+//listen for a  keypress
+$(document).keypress(function(key) {
+  switch(key.which)
+  {
+    case 13: //RETURN key
+      playersGuessSubmission();
+      break;
+    case 104: //'h' key
+      provideHint();
+      break;
+    case 114: //'r' key
+      playAgain();
+      break;
+    default:
+      break;
+  }
+});
+
+
+function changeBackground(color)
+{
+  //change background color and animate
+  $("body").animate({backgroundColor: color}, 500);
+
+}

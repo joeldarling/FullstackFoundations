@@ -4,6 +4,7 @@
 body {
 	padding-top: 50px;
 	background-color: #00ccff;
+	color: #332;
 }
 
 a{
@@ -52,6 +53,6 @@ a{
 }
 
 #guess-list {
-	display: block;
+	display: none;
 	margin-top: 100px;
 }
