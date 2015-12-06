@@ -1,28 +1,25 @@
+//Joel Darling GuessingGame
 /* **** Global Variables **** */
-// try to elminate these global variables in your project, these are here just to start.
-
 
 var winningNumber = generateWinningNumber(),
     guessesLeft = 5,
     guessHistory=[],gameOver=false;
 
-
-
 /* **** Guessing Game Functions **** */
 
 // Generate the Winning Number
+function generateWinningNumber()
+{
 
-function generateWinningNumber(){
-	// add code here
   return Math.floor(Math.random()*99) + 1;
 
 }
 
 // Fetch the Players Guess
+function playersGuessSubmission()
+{
 
-function playersGuessSubmission(){
-
-  //Triggered when user presses SUBMIT or clicks enter
+  //Triggered when user presses SUBMIT or presess ENTER / RETURN
 
   //grab the current value from the input field
   var playersGuess=parseInt($('#guessInput').val());
@@ -33,8 +30,79 @@ function playersGuessSubmission(){
 
 }
 
+// Check if the Player's Guess is the winning number
+function checkGuess(guess)
+{
+
+  if(guess == winningNumber)
+  {
+    //we have a winner!
+    gameOver = true;
+
+    changeBackground("#f5f5f5");
+
+    $('#guess-count').text("");
+    //print Winner Message!
+    $('#status').text("You are a WINNER!");
+    $('.container').effect("bounce",1000);
+  }
+  else if(guess<1 || guess>100)
+  {
+    //out of range
+    $('#status').text("You need to guess a number between 1 and 100!");
+    $('#status').effect("bounce",500);
+  }
+  else if(checkGuessHistory(guessHistory,guess))
+  {
+    //player already guessed this!
+    $('#status').text("You already guessed this number.");
+    $('#status').effect("bounce",500);
+  }
+  else
+  {
+    //bad guess!
+
+    //decrement guess counter
+    guessesLeft--;
+
+    //check for end of game
+    if(guessesLeft==0)
+    {
+      //game over
+      gameOver = true;
+
+      //print guesses remaining
+      $('#guess-count').text(guessesLeft + " Guesses Remaining");
+
+      $('#status').text("You lose. Try again!");
+
+      //change DOM to scaryness
+      changeBackground("#1f1f1f");
+      $("body").css("color", "red");
+    }
+    else
+    {
+      //new guess! add it to the list
+      guessHistory.push(guess);
+
+      //show the guess list
+      $("#guess-list").css("display", "block");
+
+      //update page with guess to guess List
+      $('#guess-list').append("<p>"+guess+"</p>");
+
+      //print guesses remaining
+      $('#guess-count').text(guessesLeft + " Guesses Remaining");
+
+      //update DOM with guess advice!
+      $('#status').text(lowerOrHigher(guess));
+    }
+  }
+}
+
 // Determine if the next guess should be a lower or higher number
-function lowerOrHigher(guess){
+function lowerOrHigher(guess)
+{
 	// add code here
   var guessProximity = Math.abs(guess-winningNumber);
   var result = "";
@@ -64,102 +132,23 @@ function lowerOrHigher(guess){
   return result;
 }
 
-// Check if the Player's Guess is the winning number
-
-function checkGuess(guess){
-	// add code here
-  if(guess == winningNumber)
-  {
-    //we have a winner!
-    changeBackground("#f5f5f5");
-
-    $('#guess-count').text("");
-    //print Winner Message!
-    $('#status').text("You are a WINNER!");
-    $('.container').effect("bounce",1000);
-  }
-  else if(guess<1 || guess>100)
-  {
-    //out of range
-    $('#status').text("You need to guess a number between 1 and 100!");
-    $('#status').effect("bounce",500);
-
-  }
-  else if(checkGuessHistory(guessHistory,guess))
-  {
-    //player already guessed this!
-    $('#status').text("You already guessed this number.");
-    $('#status').effect("bounce",500);
-    console.log(guessHistory);
-    console.log(guess);
-  }
-  else
-  {
-    //bad guess!
-    //decrement guess counter
-    guessesLeft--;
-
-    //check for end of game
-    if(guessesLeft==0)
-    {
-      //game over
-      gameOver = true;
-      //print guesses remaining
-      $('#guess-count').text(guessesLeft + " Guesses Remaining");
-
-      $('#status').text("You lose. Try again!");
-
-      //change DOM to scaryness
-      changeBackground("#1f1f1f");
-      $("body").css("color", "red");
-
-    }
-    else
-    {
-      //new guess! add it to the list
-      guessHistory.push(guess);
-
-      //is this the first guess? if so, show the guess list
-      if(guessHistory.length>0)
-        $("#guess-list").css("display", "block");
-
-      //update page with guess to guess List
-      $('#guess-list').append("<p>"+guess+"</p>");
-
-      //print guesses remaining
-      $('#guess-count').text(guessesLeft + " Guesses Remaining");
-
-      //update DOM with guess advice!
-      $('#status').text(lowerOrHigher(guess));
-
-    }
-
-
-  }
-
-}
-
 // Create a provide hint button that provides additional clues to the "Player"
-
-function provideHint(){
-	// add code here
-
+function provideHint()
+{
   var options=[];
 
   options.push(Math.floor(Math.random()*99) + 1);
   options.push(Math.floor(Math.random()*99) + 1);
   options.push(winningNumber);
 
-  //add 3 possible hits to the DOM
+  //add 3 possible numbers to the DOM
   $("#guess-list").css("display", "block");
   $('#guess-list').append("<p> ** Hint: "+options[0]+" or "+options[1]+" or "+options[2]+" **</p>");
 
 }
 
-// Allow the "Player" to Play Again
-
-function playAgain(){
-
+function playAgain()
+{
 //Reset the game state!
 gameOver = false;
 
@@ -168,7 +157,6 @@ winningNumber = generateWinningNumber();
 
 //reset Guesses remaining
 guessesLeft = 5;
-
 
 //print guesses remaining
 $('#guess-count').text(guessesLeft + " Guesses Remaining");
@@ -208,7 +196,8 @@ function checkGuessHistory(arr, number)
 /* **** Event Listeners/Handlers ****  */
 
 //listen for a  keypress
-$(document).keypress(function(key) {
+$(document).keypress(function(key)
+{
   switch(key.which)
   {
     case 13: //RETURN key
