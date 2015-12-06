@@ -103,10 +103,10 @@ function checkGuess(guess)
 // Determine if the next guess should be a lower or higher number
 function lowerOrHigher(guess)
 {
-	// add code here
   var guessProximity = Math.abs(guess-winningNumber);
   var result = "";
 
+  //determin low or high
   if(guess < winningNumber)
   {
     result+="Your guess is lower ";
@@ -115,6 +115,7 @@ function lowerOrHigher(guess)
     result+="Your guess is higher ";
   }
 
+  //determine proximity
   if(guessProximity<=10){
     result+=" and you are within 10 digits!";
     changeBackground("#c84340");
@@ -172,8 +173,9 @@ guessHistory = [];
 changeBackground("#00ccff");
 $("body").css("color", "#332");
 
-//
+//reset input field
 $('#guessInput').val("Enter a number 1-100");
+
 //reset game feedback text
 $('#status').text('');
 
@@ -195,7 +197,7 @@ function checkGuessHistory(arr, number)
 
 /* **** Event Listeners/Handlers ****  */
 
-//listen for a  keypress
+//listen for a keypress
 $(document).keypress(function(key)
 {
   switch(key.which)
@@ -213,7 +215,6 @@ $(document).keypress(function(key)
       break;
   }
 });
-
 
 function changeBackground(color)
 {
