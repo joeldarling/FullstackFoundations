@@ -22,7 +22,7 @@ function playersGuessSubmission()
   //Triggered when user presses SUBMIT or presess ENTER / RETURN
 
   //grab the current value from the input field
-  var playersGuess=parseInt($('#guessInput').val());
+  var playersGuess=+$('#guessInput').val();
 
   //check the answer!
   if(!isNaN(playersGuess) && gameOver == false)
@@ -201,6 +201,7 @@ function checkGuessHistory(arr, number)
 $(document).keypress(function(key)
 {
   switch(key.which)
+
   {
     case 13: //RETURN key
       playersGuessSubmission();
